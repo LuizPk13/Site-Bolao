@@ -1,0 +1,219 @@
+:root {
+  --bg: #f5f5f5;
+  --card: #fff;
+  --bd: #e5e5e5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  font-size: 11pt;
+  background: var(--bg);
+  color: #111;
+}
+
+.top {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--bd);
+  background: #fff;
+  text-align: center;
+}
+
+.top h1 {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0 0 6px;
+}
+
+.top p {
+  font-size: 16px;
+  margin: 0;
+  opacity: 0.75;
+}
+
+.container {
+  padding: 20px;
+  display: grid;
+  gap: 16px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--bd);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.card h2 {
+  text-align: center;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.pill {
+  border: 1px solid var(--bd);
+  background: #fff;
+  border-radius: 999px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.pill:hover {
+  background: #f0f0f0;
+}
+
+/* Tabelas (desktop) */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  table-layout: auto; /* <- importante */
+}
+
+.table th,
+.table td {
+  border-bottom: 1px solid var(--bd);
+  padding: 8px;
+  text-align: left;
+}
+
+.table th {
+  background: #fafafa;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+select {
+  padding: 6px 8px;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Tabela do grupo: alinhar colunas */
+#tabelaGrupo th:nth-child(1),
+#tabelaGrupo td:nth-child(1) {
+  text-align: left; /* Time esquerdo */
+}
+
+#tabelaGrupo th:nth-child(2),
+#tabelaGrupo td:nth-child(2),
+#tabelaGrupo th:nth-child(3),
+#tabelaGrupo td:nth-child(3),
+#tabelaGrupo th:nth-child(4),
+#tabelaGrupo td:nth-child(4) {
+  text-align: center; /* Placares e o X */
+  width: 80px;        /* opcional: deixa mais “reta” */
+  white-space: nowrap;
+}
+
+#tabelaGrupo th:nth-child(5),
+#tabelaGrupo td:nth-child(5) {
+  text-align: right; /* Time direito */
+}
+
+#tabelaGrupo td:nth-child(2),
+#tabelaGrupo td:nth-child(4) {
+  font-weight: 700;
+}
+
+#tabelaGrupo td:nth-child(3) {
+  opacity: 0.7;
+  font-weight: 700;
+}
+
+#nomeSelecionado {
+  text-align: center;
+}
+
+/* ===== RESPONSIVIDADE (celular) ===== */
+@media (max-width: 768px) {
+  .top h1 {
+    font-size: 22px;
+  }
+
+  .top p {
+    font-size: 13px;
+  }
+
+  .container {
+    padding: 10px;
+  }
+
+  .card {
+    padding: 10px;
+  }
+
+  /* Tabelas: permitir scroll horizontal no celular */
+  .table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  #tabelaGrupo th,
+  #tabelaGrupo td {
+    font-size: 13px;
+    padding: 6px;
+  }
+
+  #tabelaGrupo td:nth-child(1),
+  #tabelaGrupo td:nth-child(5) {
+    font-size: 12px;
+  }
+}
+
+#tabelaGrupo {
+  table-layout: fixed;
+}
+
+#palpites th:nth-child(3),
+#palpites td:nth-child(3),
+#palpites th:nth-child(4),
+#palpites td:nth-child(4) {
+  text-align: center;
+  white-space: nowrap;
+}
+
+#palpites th:nth-child(1),
+#palpites td:nth-child(1) {
+    width: 120px;
+}
+
+#palpites th:nth-child(3),
+#palpites td:nth-child(3) {
+    width: 110px;
+}
+
+#palpites th:nth-child(4),
+#palpites td:nth-child(4) {
+    width: 90px;
+}
+
+/* Centralizar toda a tabela de palpites */
+#palpites th,
+#palpites td {
+  text-align: center;
+}
+
+/* Opcional: melhorar espaçamento */
+#palpites th {
+  font-weight: 600;
+}
