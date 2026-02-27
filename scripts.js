@@ -131,7 +131,7 @@ function renderRanking(ranking) {
 function renderSelectParticipantes(participantes) {
   const sel = document.getElementById("participante");
   if (!sel) return;
-  sel.innerHTML = '<option value="">Selecione um participante...</option>';
+  sel.innerHTML = '<option value="">Participante...</option>';
 
   participantes.forEach((p, idx) => {
     const op = document.createElement("option");
