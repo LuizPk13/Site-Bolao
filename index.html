@@ -1,81 +1,84 @@
 ﻿<!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bolão da COJUR</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     <header class="top">
-        <h1>Bolão da Copa</h1>
-        <p>Grupos - Palpites por participantes - Ranking</p>
+      <h1>Bolão da Copa</h1>
+      <p>Grupos - Palpites por participantes - Ranking</p>
     </header>
 
     <main class="container">
-        <section class="card">
-            <h2>Grupos</h2>
-            <div id="grupos" class="grid"></div>
-        </section>
+      <section class="card">
+        <h2>Grupos</h2>
+        <div id="grupos" class="grid"></div>
+      </section>
 
-        <section class="card">
-            <h2 id="tituloGrupo">Selecione um grupo</h2>
+      <section class="card">
+        <h2 id="tituloGrupo">Selecione um grupo</h2>
 
-            <table class="table" id="tabelaGrupo">
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Placar</th>
-                        <th></th>
-                        <th>Placar</th>
-                        <th>Time</th>
-                    </tr>
-                </thead>
-                <tbody id="corpoGrupo"></tbody>
-            </table>
-        </section>
+        <table class="table" id="tabelaGrupo">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Placar</th>
+              <th></th>
+              <th>Placar</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody id="corpoGrupo"></tbody>
+        </table>
+      </section>
 
-        <section class="card">
-            <h2>Palpites</h2>
+      <section class="card">
+        <h2>Palpites</h2>
 
-            <div class="row filtros">
-                <label for="participante">Participante:</label>
-                <select id="participante"></select>
+        <div class="row filtros">
+          <label for="participante">Participante:</label>
+          <select id="participante"></select>
 
-                <label for="grupoFiltro">Grupo:</label>
-                <select id="grupoFiltro">
-                    <option value="">Todos</option>
-                </select>
-            </div>
+          <label for="grupoFiltro">Grupo:</label>
+          <select id="grupoFiltro">
+            <option value="">Todos</option>
+          </select>
+        </div>
 
-            <div id="palpitesWrap" class="hidden">
-                <h3 id="nomeSelecionado"></h3>
-                <table class="table" id="palpites">
-                    <thead>
-                        <tr>
-                            <th>Grupo</th>
-                            <th>Jogo</th>
-                            <th>Pontos</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </section>
+        <div id="palpitesWrap" class="hidden">
+          <h3 id="nomeSelecionado"></h3>
+          <table class="table" id="palpites">
+            <thead>
+              <tr>
+                <th>Grupo</th>
+                <th>Jogo</th>
+                <th>Pontos</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
 
-        <section class="card">
-            <h2>Top participantes</h2>
-            <table class="table" id="ranking">
-                <thead>
-                    <tr> <th>Nome</th> <th>Pontos</th> </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </section>
+      <section class="card">
+        <h2>Top participantes</h2>
+        <table class="table" id="ranking">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Pontos</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
     </main>
 
     <!-- SheetJS (ler XLSX no navegador) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="scripts.js"></script>
-</body>
+  </body>
 </html>

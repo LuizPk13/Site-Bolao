@@ -3,24 +3,27 @@
 const ARQ = "BOLAOZAÇO.xlsx";
 const ABA = "Bolão da Copa";
 
-let dados = {
-  participantes: [], // [{nome, col}]
-  grupos: [],        // [{nome, jogos:[{grupo, timeA, timeB, linha}]}]
-  ranking: [],       // [{nome, pontos}]
+const dados = {
+  participantes: [], // [{ nome, col }]
+  grupos: [], // [{ nome, jogos:[{ grupo, timeA, timeB, linha }] }]
+  ranking: [], // [{ nome, pontos }]
 };
 
 /* ---------- CARREGAMENTO ---------- */
 
 fetch(ARQ)
-  .then(r => r.arrayBuffer())
-  .then(buf => {
+  .then((r) => r.arrayBuffer())
+  .then((buf) => {
     const wb = XLSX.read(buf, { type: "array" });
     const ws = wb.Sheets[ABA] || wb.Sheets[wb.SheetNames[0]];
-    if (!ws) throw new Error(`Não achei a aba "${ABA}" e nenhuma aba disponível no arquivo.`);
+
+    if (!ws) {
+      throw new Error(`Não achei a aba "${ABA}" e nenhuma aba disponível no arquivo.`);
+    }
 
     // Converte em matriz (rows x cols)
     rowsGlobal = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
-    
+
     dados.participantes = extrairParticipantes(rowsGlobal);
     dados.grupos = extrairGruposEJogos(rowsGlobal);
     dados.ranking = extrairRanking(rowsGlobal);
@@ -31,7 +34,7 @@ fetch(ARQ)
     renderSelectParticipantes(dados.participantes);
     renderSelectGrupos(dados.grupos);
   })
-  .catch(err => {
+  .catch((err) => {
     alert("Erro ao carregar planilha: " + err.message);
     console.error(err);
   });
@@ -45,6 +48,7 @@ function extrairParticipantes(rows) {
   header.forEach((v, col) => {
     const txt = String(v).trim();
     if (!txt || txt.toLowerCase() === "pts." || txt.startsWith("=")) return;
+
     participantes.push({ nome: txt, col });
   });
 
@@ -55,7 +59,7 @@ function extrairGruposEJogos(rows) {
   const grupos = [];
   let grupoAtual = null;
 
-  for (let i = 0; i < rows.length; i++) {
+  for (let i = 0; i < rows.length; i += 1) {
     const colA = String(rows[i]?.[0] ?? "").trim();
     const colC = String(rows[i]?.[2] ?? "").trim();
     const colE = String(rows[i]?.[4] ?? "").trim();
@@ -75,20 +79,26 @@ function extrairGruposEJogos(rows) {
       });
     }
   }
+
   return grupos;
 }
 
 function extrairRanking(rows) {
-  const idxRanking = rows.findIndex(r => String(r?.[0] ?? "").trim().toUpperCase() === "RANKING");
+  const idxRanking = rows.findIndex(
+    (r) => String(r?.[0] ?? "").trim().toUpperCase() === "RANKING"
+  );
+
   if (idxRanking === -1) return [];
 
   const start = idxRanking + 2;
   const ranking = [];
 
-  for (let i = start; i < rows.length; i++) {
+  for (let i = start; i < rows.length; i += 1) {
     const nome = String(rows[i]?.[0] ?? "").trim();
     const pontos = rows[i]?.[1];
+
     if (!nome) break;
+
     const n = Number(String(pontos).replace(",", "."));
     ranking.push({ nome, pontos: Number.isFinite(n) ? n : 0 });
   }
@@ -97,21 +107,26 @@ function extrairRanking(rows) {
   return ranking;
 }
 
-/* ---------- RENDERIZAÇÃO DE COMPONENTES ---------- */
+/* ---------- RENDERIZAÇÃO ---------- */
 
 function renderGrupos(grupos) {
   const el = document.getElementById("grupos");
   if (!el) return;
+
   el.innerHTML = "";
 
-  grupos.forEach(g => {
+  grupos.forEach((g) => {
     const btn = document.createElement("button");
     btn.className = "pill";
     btn.textContent = g.nome;
     btn.onclick = () => {
       mostrarTabelaDoGrupo(g);
-      document.getElementById("tabelaGrupo")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.getElementById("tabelaGrupo")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     };
+
     el.appendChild(btn);
   });
 }
@@ -119,9 +134,10 @@ function renderGrupos(grupos) {
 function renderRanking(ranking) {
   const tbody = document.querySelector("#ranking tbody");
   if (!tbody) return;
+
   tbody.innerHTML = "";
 
-  ranking.forEach(p => {
+  ranking.forEach((p) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `<td>${p.nome}</td><td>${p.pontos}</td>`;
     tbody.appendChild(tr);
@@ -131,6 +147,7 @@ function renderRanking(ranking) {
 function renderSelectParticipantes(participantes) {
   const sel = document.getElementById("participante");
   if (!sel) return;
+
   sel.innerHTML = '<option value="">Participante...</option>';
 
   participantes.forEach((p, idx) => {
@@ -146,9 +163,10 @@ function renderSelectParticipantes(participantes) {
 function renderSelectGrupos(grupos) {
   const selGrupo = document.getElementById("grupoFiltro");
   if (!selGrupo) return;
+
   selGrupo.innerHTML = '<option value="">Todos os Grupos</option>';
 
-  grupos.forEach(g => {
+  grupos.forEach((g) => {
     const op = document.createElement("option");
     op.value = g.nome;
     op.textContent = g.nome;
@@ -158,7 +176,7 @@ function renderSelectGrupos(grupos) {
   selGrupo.addEventListener("change", atualizarPalpitesFiltrados);
 }
 
-/* ---------- LÓGICA DE FILTRO E PALPITES ---------- */
+/* ---------- FILTRO E PALPITES ---------- */
 
 function atualizarPalpitesFiltrados() {
   const participanteSel = document.getElementById("participante");
@@ -176,11 +194,10 @@ function atualizarPalpitesFiltrados() {
   nomeHeader.textContent = part.nome;
   tbody.innerHTML = "";
 
-  dados.grupos.forEach(g => {
-    // Aplica o filtro de grupo se houver um selecionado
+  dados.grupos.forEach((g) => {
     if (grupoFiltro && g.nome !== grupoFiltro) return;
 
-    g.jogos.forEach(jogo => {
+    g.jogos.forEach((jogo) => {
       const r = rowsGlobal[jogo.linha] || [];
 
       // Colunas: Palpite A (col), Palpite B (col + 2), Pts (col + 3)
@@ -191,7 +208,15 @@ function atualizarPalpitesFiltrados() {
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${jogo.grupo}</td>
-        <td>${jogo.timeA} - ${pA} X ${pB} - ${jogo.timeB}</td>
+        <td>
+          <div class="jogo-linha">
+            <span class="time-a">${jogo.timeA}</span>
+            <span class="palpite-a">${pA}</span>
+            <span class="versus">X</span>
+            <span class="palpite-b">${pB}</span>
+            <span class="time-b">${jogo.timeB}</span>
+          </div>
+        </td>
         <td>${pts}</td>
       `;
       tbody.appendChild(tr);
@@ -214,7 +239,7 @@ function mostrarTabelaDoGrupo(grupo) {
   titulo.textContent = grupo.nome;
   corpo.innerHTML = "";
 
-  grupo.jogos.forEach(jogo => {
+  grupo.jogos.forEach((jogo) => {
     const r = rowsGlobal[jogo.linha] || [];
     const placarA = String(r[1] ?? "").trim() || "-";
     const x = String(r[2] ?? "").trim() || "x";
@@ -231,9 +256,3 @@ function mostrarTabelaDoGrupo(grupo) {
     corpo.appendChild(tr);
   });
 }
-
-
-
-
-
-
