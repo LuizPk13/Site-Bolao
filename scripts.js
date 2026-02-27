@@ -1,4 +1,4 @@
-let rowsGlobal = [];
+﻿let rowsGlobal = [];
 
 const ARQ = "BOLAOZAÇO.xlsx";
 const ABA = "Bolão da Copa";
@@ -15,8 +15,8 @@ fetch(ARQ)
   .then(r => r.arrayBuffer())
   .then(buf => {
     const wb = XLSX.read(buf, { type: "array" });
-    const ws = wb.Sheets[ABA];
-    if (!ws) throw new Error(`Não achei a aba "${ABA}"`);
+    const ws = wb.Sheets[ABA] || wb.Sheets[wb.SheetNames[0]];
+    if (!ws) throw new Error(`Não achei a aba "${ABA}" e nenhuma aba disponível no arquivo.`);
 
     // Converte em matriz (rows x cols)
     rowsGlobal = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
@@ -191,8 +191,7 @@ function atualizarPalpitesFiltrados() {
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${jogo.grupo}</td>
-        <td>${jogo.timeA} x ${jogo.timeB}</td>
-        <td>${pA} x ${pB}</td>
+        <td>${jogo.timeA} - ${pA} X ${pB} - ${jogo.timeB}</td>
         <td>${pts}</td>
       `;
       tbody.appendChild(tr);
@@ -232,3 +231,9 @@ function mostrarTabelaDoGrupo(grupo) {
     corpo.appendChild(tr);
   });
 }
+
+
+
+
+
+

@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --bg: #f5f5f5;
   --card: #fff;
   --bd: #e5e5e5;
@@ -120,7 +120,7 @@ select {
 #tabelaGrupo th:nth-child(4),
 #tabelaGrupo td:nth-child(4) {
   text-align: center; /* Placares e o X */
-  width: 80px;        /* opcional: deixa mais “reta” */
+  width: 80px;        /* opcional: deixa mais â€œretaâ€ */
   white-space: nowrap;
 }
 
@@ -213,7 +213,42 @@ select {
   text-align: center;
 }
 
-/* Opcional: melhorar espaçamento */
+/* Opcional: melhorar espaÃ§amento */
 #palpites th {
   font-weight: 600;
+}
+/* Ranking: manter pontos alinhados à direita */
+#ranking {
+  width: 100%;
+  table-layout: fixed;
+}
+
+#ranking th:nth-child(2),
+#ranking td:nth-child(2) {
+  text-align: right;
+}
+
+/* Cabeçalho: evitar corte/quebra estranha no celular */
+.top p {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 768px) {
+  /* No ranking, manter tabela normal em vez de bloco com scroll */
+  #ranking.table {
+    display: table;
+    overflow-x: visible;
+    white-space: normal;
+  }
+
+  /* Filtros quebram linha para não estourar layout */
+  .row.filtros {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+
+  .row.filtros select {
+    min-width: 140px;
+  }
 }
