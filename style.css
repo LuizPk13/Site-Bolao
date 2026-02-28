@@ -256,9 +256,9 @@ select {
   }
 
   .table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
+    display: table;
+    width: 100%;
+    table-layout: fixed;
   }
 
   #ranking.table {
@@ -276,6 +276,17 @@ select {
   #tabelaGrupo td:nth-child(1),
   #tabelaGrupo td:nth-child(5) {
     font-size: 12px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  #tabelaGrupo th:nth-child(2),
+  #tabelaGrupo td:nth-child(2),
+  #tabelaGrupo th:nth-child(3),
+  #tabelaGrupo td:nth-child(3),
+  #tabelaGrupo th:nth-child(4),
+  #tabelaGrupo td:nth-child(4) {
+    width: 44px;
   }
 
   .row.filtros {
@@ -292,8 +303,14 @@ select {
   }
 
   #palpites .jogo-linha {
-    grid-template-columns: minmax(110px, 1fr) 24px 20px 24px minmax(110px, 1fr);
+    grid-template-columns: minmax(0, 1fr) 24px 20px 24px minmax(0, 1fr);
     column-gap: 4px;
+  }
+
+  #palpites .time-a,
+  #palpites .time-b {
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 }
 
