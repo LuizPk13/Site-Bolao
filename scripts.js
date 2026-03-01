@@ -3,41 +3,68 @@
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQZmK1DRlPhgRCRDNGl2NHe3KhUHv5RciZMd5RF6OadQBO6kfEd73zm8-vgrSZrnqpyts0z28Ep3yR9/pub?gid=2131847576&single=true&output=csv";
 
+const REFRESH_INTERVAL = 5000; // 5 segundos
+
 const dados = {
-  participantes: [], // [{ nome, col }]
-  grupos: [], // [{ nome, jogos:[{ grupo, timeA, timeB, linha }] }]
-  ranking: [], // [{ nome, pontos }]
+  participantes: [],
+  grupos: [],
+  ranking: [],
 };
 
-/* ---------- CARREGAMENTO (GOOGLE SHEETS CSV) ---------- */
+let ultimoCSV = "";
 
-fetch(SHEET_URL, { cache: "no-store" })
-  .then((r) => {
-    if (!r.ok) throw new Error(`HTTP ${r.status} ao buscar a planilha`);
-    return r.text();
-  })
-  .then((csvText) => {
-    rowsGlobal = parseCSV(csvText);
+/* ================= CARREGAMENTO ================= */
 
-    dados.participantes = extrairParticipantes(rowsGlobal);
-    dados.grupos = extrairGruposEJogos(rowsGlobal);
-    dados.ranking = extrairRanking(rowsGlobal);
+carregarDadosInicial();
+setInterval(recarregarDados, REFRESH_INTERVAL);
 
-    // Renderização inicial da interface
-    renderGrupos(dados.grupos);
-    renderRanking(dados.ranking);
-    renderSelectParticipantes(dados.participantes);
-    renderSelectGrupos(dados.grupos);
-  })
-  .catch((err) => {
-    alert("Erro ao carregar Google Sheets: " + err.message);
-    console.error(err);
+function carregarDadosInicial() {
+  fetchSheet().then(processarDados);
+}
+
+function recarregarDados() {
+  fetchSheet().then((csvText) => {
+    if (csvText !== ultimoCSV) {
+      processarDados(csvText);
+    }
   });
+}
 
-/* ---------- CSV PARSER (respeita aspas, vírgulas e quebras de linha) ---------- */
+function fetchSheet() {
+  return fetch(SHEET_URL + "&t=" + Date.now(), { cache: "no-store" })
+    .then((r) => r.text());
+}
+
+function processarDados(csvText) {
+  ultimoCSV = csvText;
+  rowsGlobal = parseCSV(csvText);
+
+  const participanteAtual = document.getElementById("participante")?.value;
+  const grupoAtual = document.getElementById("grupoFiltro")?.value;
+
+  dados.participantes = extrairParticipantes(rowsGlobal);
+  dados.grupos = extrairGruposEJogos(rowsGlobal);
+  dados.ranking = extrairRanking(rowsGlobal);
+
+  renderGrupos(dados.grupos);
+  renderRanking(dados.ranking);
+  renderSelectParticipantes(dados.participantes);
+  renderSelectGrupos(dados.grupos);
+
+  if (participanteAtual) {
+    document.getElementById("participante").value = participanteAtual;
+  }
+
+  if (grupoAtual) {
+    document.getElementById("grupoFiltro").value = grupoAtual;
+  }
+
+  atualizarPalpitesFiltrados();
+}
+
+/* ================= CSV PARSER ================= */
 
 function parseCSV(text) {
-  // Remove BOM (às vezes vem no começo)
   if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
 
   const rows = [];
@@ -45,15 +72,14 @@ function parseCSV(text) {
   let cell = "";
   let inQuotes = false;
 
-  for (let i = 0; i < text.length; i += 1) {
+  for (let i = 0; i < text.length; i++) {
     const ch = text[i];
     const next = text[i + 1];
 
     if (inQuotes) {
       if (ch === '"' && next === '"') {
-        // Aspas escapada dentro do texto
         cell += '"';
-        i += 1;
+        i++;
       } else if (ch === '"') {
         inQuotes = false;
       } else {
@@ -73,11 +99,6 @@ function parseCSV(text) {
       continue;
     }
 
-    if (ch === "\r") {
-      // ignora CR, trata no \n
-      continue;
-    }
-
     if (ch === "\n") {
       row.push(cell);
       rows.push(row);
@@ -86,22 +107,18 @@ function parseCSV(text) {
       continue;
     }
 
-    cell += ch;
+    if (ch !== "\r") {
+      cell += ch;
+    }
   }
 
-  // Última célula/linha
   row.push(cell);
   rows.push(row);
-
-  // Limpa linhas totalmente vazias no final
-  while (rows.length && rows[rows.length - 1].every((c) => String(c).trim() === "")) {
-    rows.pop();
-  }
 
   return rows;
 }
 
-/* ---------- EXTRAÇÕES ---------- */
+/* ================= EXTRAÇÕES ================= */
 
 function extrairParticipantes(rows) {
   const header = rows[0] || [];
@@ -110,7 +127,6 @@ function extrairParticipantes(rows) {
   header.forEach((v, col) => {
     const txt = String(v).trim();
     if (!txt || txt.toLowerCase() === "pts." || txt.startsWith("=")) return;
-
     participantes.push({ nome: txt, col });
   });
 
@@ -121,7 +137,7 @@ function extrairGruposEJogos(rows) {
   const grupos = [];
   let grupoAtual = null;
 
-  for (let i = 0; i < rows.length; i += 1) {
+  for (let i = 0; i < rows.length; i++) {
     const colA = String(rows[i]?.[0] ?? "").trim();
     const colC = String(rows[i]?.[2] ?? "").trim();
     const colE = String(rows[i]?.[4] ?? "").trim();
@@ -132,7 +148,7 @@ function extrairGruposEJogos(rows) {
       continue;
     }
 
-    if (grupoAtual && colA && colE && colC.toUpperCase() === "X" && !/^GRUPO/i.test(colA)) {
+    if (grupoAtual && colA && colE && colC.toUpperCase() === "X") {
       grupoAtual.jogos.push({
         grupo: grupoAtual.nome,
         timeA: colA,
@@ -152,13 +168,11 @@ function extrairRanking(rows) {
 
   if (idxRanking === -1) return [];
 
-  const start = idxRanking + 2;
   const ranking = [];
 
-  for (let i = start; i < rows.length; i += 1) {
+  for (let i = idxRanking + 2; i < rows.length; i++) {
     const nome = String(rows[i]?.[0] ?? "").trim();
     const pontos = rows[i]?.[1];
-
     if (!nome) break;
 
     const n = Number(String(pontos).replace(",", "."));
@@ -169,7 +183,7 @@ function extrairRanking(rows) {
   return ranking;
 }
 
-/* ---------- RENDERIZAÇÃO ---------- */
+/* ================= RENDER ================= */
 
 function renderGrupos(grupos) {
   const el = document.getElementById("grupos");
@@ -181,14 +195,7 @@ function renderGrupos(grupos) {
     const btn = document.createElement("button");
     btn.className = "pill";
     btn.textContent = g.nome;
-    btn.onclick = () => {
-      mostrarTabelaDoGrupo(g);
-      document.getElementById("tabelaGrupo")?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    };
-
+    btn.onclick = () => mostrarTabelaDoGrupo(g);
     el.appendChild(btn);
   });
 }
@@ -219,14 +226,14 @@ function renderSelectParticipantes(participantes) {
     sel.appendChild(op);
   });
 
-  sel.addEventListener("change", atualizarPalpitesFiltrados);
+  sel.onchange = atualizarPalpitesFiltrados;
 }
 
 function renderSelectGrupos(grupos) {
   const selGrupo = document.getElementById("grupoFiltro");
   if (!selGrupo) return;
 
-  selGrupo.innerHTML = '<option value="">Todos os Grupos</option>';
+  selGrupo.innerHTML = '<option value="">Todos</option>';
 
   grupos.forEach((g) => {
     const op = document.createElement("option");
@@ -235,10 +242,10 @@ function renderSelectGrupos(grupos) {
     selGrupo.appendChild(op);
   });
 
-  selGrupo.addEventListener("change", atualizarPalpitesFiltrados);
+  selGrupo.onchange = atualizarPalpitesFiltrados;
 }
 
-/* ---------- FILTRO E PALPITES ---------- */
+/* ================= PALPITES ================= */
 
 function atualizarPalpitesFiltrados() {
   const participanteSel = document.getElementById("participante");
@@ -247,11 +254,11 @@ function atualizarPalpitesFiltrados() {
   const nomeHeader = document.getElementById("nomeSelecionado");
   const tbody = document.querySelector("#palpites tbody");
 
-  const idx = participanteSel.value;
-  if (idx === "") return esconderPalpites();
+  const idx = participanteSel?.value;
+  if (!idx) return esconderPalpites();
 
   const part = dados.participantes[Number(idx)];
-  const grupoFiltro = grupoSel ? grupoSel.value : "";
+  const grupoFiltro = grupoSel?.value || "";
 
   nomeHeader.textContent = part.nome;
   tbody.innerHTML = "";
@@ -262,23 +269,14 @@ function atualizarPalpitesFiltrados() {
     g.jogos.forEach((jogo) => {
       const r = rowsGlobal[jogo.linha] || [];
 
-      // Colunas: Palpite A (col), Palpite B (col + 2), Pts (col + 3)
-      const pA = (r[part.col] ?? "").toString().trim() || "-";
-      const pB = (r[part.col + 2] ?? "").toString().trim() || "-";
+      const pA = (r[part.col] ?? "").trim() || "-";
+      const pB = (r[part.col + 2] ?? "").trim() || "-";
       const pts = r[part.col + 3] ?? "";
 
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${jogo.grupo}</td>
-        <td>
-          <div class="jogo-linha">
-            <span class="time-a">${jogo.timeA}</span>
-            <span class="palpite-a">${pA}</span>
-            <span class="versus">X</span>
-            <span class="palpite-b">${pB}</span>
-            <span class="time-b">${jogo.timeB}</span>
-          </div>
-        </td>
+        <td>${jogo.timeA} ${pA} X ${pB} ${jogo.timeB}</td>
         <td>${pts}</td>
       `;
       tbody.appendChild(tr);
@@ -289,8 +287,7 @@ function atualizarPalpitesFiltrados() {
 }
 
 function esconderPalpites() {
-  const wrap = document.getElementById("palpitesWrap");
-  if (wrap) wrap.classList.add("hidden");
+  document.getElementById("palpitesWrap")?.classList.add("hidden");
 }
 
 function mostrarTabelaDoGrupo(grupo) {
@@ -303,15 +300,16 @@ function mostrarTabelaDoGrupo(grupo) {
 
   grupo.jogos.forEach((jogo) => {
     const r = rowsGlobal[jogo.linha] || [];
-    const placarA = String(r[1] ?? "").trim() || "-";
-    const x = String(r[2] ?? "").trim() || "x";
-    const placarB = String(r[3] ?? "").trim() || "-";
+
+    const placarA = r[1] || "-";
+    const x = r[2] || "x";
+    const placarB = r[3] || "-";
 
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${jogo.timeA}</td>
       <td>${placarA}</td>
-      <td style="text-align:center">${x}</td>
+      <td>${x}</td>
       <td>${placarB}</td>
       <td>${jogo.timeB}</td>
     `;
