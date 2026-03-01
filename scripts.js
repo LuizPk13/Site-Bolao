@@ -1,7 +1,7 @@
 ﻿let rowsGlobal = [];
 
-const ARQ = "BOLAOZAÇO.xlsx";
-const ABA = "Bolão da Copa";
+const SHEET_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQZmK1DRlPhgRCRDNGl2NHe3KhUHv5RciZMd5RF6OadQBO6kfEd73zm8-vgrSZrnqpyts0z28Ep3yR9/pub?gid=2131847576&single=true&output=csv";
 
 const dados = {
   participantes: [], // [{ nome, col }]
@@ -9,20 +9,15 @@ const dados = {
   ranking: [], // [{ nome, pontos }]
 };
 
-/* ---------- CARREGAMENTO ---------- */
+/* ---------- CARREGAMENTO (GOOGLE SHEETS CSV) ---------- */
 
-fetch(ARQ)
-  .then((r) => r.arrayBuffer())
-  .then((buf) => {
-    const wb = XLSX.read(buf, { type: "array" });
-    const ws = wb.Sheets[ABA] || wb.Sheets[wb.SheetNames[0]];
-
-    if (!ws) {
-      throw new Error(`Não achei a aba "${ABA}" e nenhuma aba disponível no arquivo.`);
-    }
-
-    // Converte em matriz (rows x cols)
-    rowsGlobal = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
+fetch(SHEET_URL, { cache: "no-store" })
+  .then((r) => {
+    if (!r.ok) throw new Error(`HTTP ${r.status} ao buscar a planilha`);
+    return r.text();
+  })
+  .then((csvText) => {
+    rowsGlobal = parseCSV(csvText);
 
     dados.participantes = extrairParticipantes(rowsGlobal);
     dados.grupos = extrairGruposEJogos(rowsGlobal);
@@ -35,9 +30,76 @@ fetch(ARQ)
     renderSelectGrupos(dados.grupos);
   })
   .catch((err) => {
-    alert("Erro ao carregar planilha: " + err.message);
+    alert("Erro ao carregar Google Sheets: " + err.message);
     console.error(err);
   });
+
+/* ---------- CSV PARSER (respeita aspas, vírgulas e quebras de linha) ---------- */
+
+function parseCSV(text) {
+  // Remove BOM (às vezes vem no começo)
+  if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
+
+  const rows = [];
+  let row = [];
+  let cell = "";
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i += 1) {
+    const ch = text[i];
+    const next = text[i + 1];
+
+    if (inQuotes) {
+      if (ch === '"' && next === '"') {
+        // Aspas escapada dentro do texto
+        cell += '"';
+        i += 1;
+      } else if (ch === '"') {
+        inQuotes = false;
+      } else {
+        cell += ch;
+      }
+      continue;
+    }
+
+    if (ch === '"') {
+      inQuotes = true;
+      continue;
+    }
+
+    if (ch === ",") {
+      row.push(cell);
+      cell = "";
+      continue;
+    }
+
+    if (ch === "\r") {
+      // ignora CR, trata no \n
+      continue;
+    }
+
+    if (ch === "\n") {
+      row.push(cell);
+      rows.push(row);
+      row = [];
+      cell = "";
+      continue;
+    }
+
+    cell += ch;
+  }
+
+  // Última célula/linha
+  row.push(cell);
+  rows.push(row);
+
+  // Limpa linhas totalmente vazias no final
+  while (rows.length && rows[rows.length - 1].every((c) => String(c).trim() === "")) {
+    rows.pop();
+  }
+
+  return rows;
+}
 
 /* ---------- EXTRAÇÕES ---------- */
 
