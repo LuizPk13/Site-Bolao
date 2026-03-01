@@ -31,8 +31,9 @@ function recarregarDados() {
 }
 
 function fetchSheet() {
-  return fetch(SHEET_URL + "&t=" + Date.now(), { cache: "no-store" })
-    .then((r) => r.text());
+  return fetch(SHEET_URL + "&t=" + Date.now(), { cache: "no-store" }).then((r) =>
+    r.text()
+  );
 }
 
 function processarDados(csvText) {
@@ -247,6 +248,18 @@ function renderSelectGrupos(grupos) {
 
 /* ================= PALPITES ================= */
 
+function montarLinhaJogo(timeA, palpiteA, palpiteB, timeB) {
+  return `
+    <div class="jogo-linha" role="presentation">
+      <span class="time-a">${timeA}</span>
+      <span class="palpite-a">${palpiteA}</span>
+      <span class="versus">X</span>
+      <span class="palpite-b">${palpiteB}</span>
+      <span class="time-b">${timeB}</span>
+    </div>
+  `;
+}
+
 function atualizarPalpitesFiltrados() {
   const participanteSel = document.getElementById("participante");
   const grupoSel = document.getElementById("grupoFiltro");
@@ -276,7 +289,7 @@ function atualizarPalpitesFiltrados() {
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${jogo.grupo}</td>
-        <td>${jogo.timeA} ${pA} X ${pB} ${jogo.timeB}</td>
+        <td>${montarLinhaJogo(jogo.timeA, pA, pB, jogo.timeB)}</td>
         <td>${pts}</td>
       `;
       tbody.appendChild(tr);
