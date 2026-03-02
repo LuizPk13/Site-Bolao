@@ -315,3 +315,49 @@ function mostrarTabelaDoGrupo(grupo) {
     corpo.appendChild(tr);
   });
 }
+
+/* ================= CONTAGEM REGRESSIVA ================= */
+
+const DATA_PRIMEIRO_JOGO = new Date(2026, 5, 11, 0, 0, 0); // 11/06/2026 00:00
+
+function iniciarCountdown() {
+  const diasEl = document.getElementById("cd-days");
+  const horasEl = document.getElementById("cd-hours");
+  const minEl = document.getElementById("cd-minutes");
+  const segEl = document.getElementById("cd-seconds");
+  const container = document.getElementById("countdown");
+  const subtitle = document.querySelector(".countdown-subtitle");
+
+  if (!diasEl || !horasEl || !minEl || !segEl || !container) return;
+
+  function atualizar() {
+    const agora = new Date();
+    const diff = DATA_PRIMEIRO_JOGO.getTime() - agora.getTime();
+
+    if (diff <= 0) {
+      if (subtitle) subtitle.textContent = "A Copa já começou!";
+      diasEl.textContent = "0";
+      horasEl.textContent = "0";
+      minEl.textContent = "0";
+      segEl.textContent = "0";
+      return;
+    }
+
+    const segundosTotais = Math.floor(diff / 1000);
+    const dias = Math.floor(segundosTotais / (60 * 60 * 24));
+    const horas = Math.floor((segundosTotais % (60 * 60 * 24)) / (60 * 60));
+    const minutos = Math.floor((segundosTotais % (60 * 60)) / 60);
+    const segundos = segundosTotais % 60;
+
+    diasEl.textContent = String(dias);
+    horasEl.textContent = String(horas).padStart(2, "0");
+    minEl.textContent = String(minutos).padStart(2, "0");
+    segEl.textContent = String(segundos).padStart(2, "0");
+  }
+
+  atualizar();
+  setInterval(atualizar, 1000);
+}
+
+// Inicia a contagem quando o script carregar
+iniciarCountdown();

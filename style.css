@@ -36,6 +36,9 @@ body{
 .top{
   padding: 18px 20px;
   text-align:center;
+  position: relative;
+  overflow: hidden;
+  min-height: 109px; /* altura base da imagem (1440x109) */
 
   background:
     linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.18)),
@@ -46,11 +49,35 @@ body{
   box-shadow: var(--shadow-soft);
 }
 
+.top .header-bg{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;      /* sem distorcer (pode cortar um pouco se necessário) */
+  object-position: center;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.top::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  /* leve overlay para o texto ficar legível em qualquer imagem */
+  background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.15));
+  z-index: 1;
+}
+
 .top h1{
   font-size: 32px;
   font-weight: 800;
   margin: 0 0 6px;
   letter-spacing:.2px;
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 2px 10px rgba(0,0,0,.35);
 }
 
 .top p{
@@ -59,6 +86,9 @@ body{
   opacity:.88;
   white-space: normal;
   overflow-wrap:anywhere;
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 2px 10px rgba(0,0,0,.35);
 }
 
 /* Layout */
@@ -327,6 +357,67 @@ select{
 .table tbody tr.top1{ background: rgba(255,223,0,.25); }
 .table tbody tr.top2{ background: rgba(0,39,118,.10); }
 .table tbody tr.top3{ background: rgba(255,223,0,.16); }
+
+/* Countdown (Faltam) */
+.countdown{
+  margin-top: 18px;
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.countdown-item{
+  min-width: 80px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.14), rgba(0,0,0,0)),
+    linear-gradient(135deg, var(--green-2), var(--green));
+  color:#fff;
+  text-align:center;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(255,223,0,.7);
+}
+
+.countdown-number{
+  display:block;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing:.5px;
+}
+
+.countdown-label{
+  display:block;
+  margin-top: 2px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity:.9;
+}
+
+.countdown-subtitle{
+  margin-top: 10px;
+  text-align:center;
+  font-size: 12px;
+  opacity:.9;
+}
+
+.countdown-highlight{
+  font-weight: 700;
+}
+
+.countdown-date{
+  display:inline-block;
+  margin-left: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--yellow);
+  color: var(--ink);
+  font-weight: 800;
+  font-size: 11px;
+  box-shadow: var(--shadow-soft);
+}
 
 /* Mobile */
 @media (max-width: 1320px){
