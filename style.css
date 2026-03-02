@@ -1,7 +1,7 @@
 ﻿:root {
   --bg: #acc6ff;
   --card: #d0ffc5;
-  --bd: #fefb98;
+  --bd: gray;
 }
 
 * {
@@ -19,7 +19,7 @@ body {
 .top {
   padding: 18px 20px;
   border-bottom: 1px solid var(--bd);
-  background: var(--bd);
+  background: #fefb98;
   text-align: center;
 }
 
