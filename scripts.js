@@ -1,9 +1,7 @@
-﻿let rowsGlobal = [];
+let rowsGlobal = [];
 
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQZmK1DRlPhgRCRDNGl2NHe3KhUHv5RciZMd5RF6OadQBO6kfEd73zm8-vgrSZrnqpyts0z28Ep3yR9/pub?gid=2131847576&single=true&output=csv";
-
-const REFRESH_INTERVAL = 5000; // 5 segundos
 
 const dados = {
   participantes: [],
@@ -11,23 +9,12 @@ const dados = {
   ranking: [],
 };
 
-let ultimoCSV = "";
-
 /* ================= CARREGAMENTO ================= */
 
 carregarDadosInicial();
-setInterval(recarregarDados, REFRESH_INTERVAL);
 
 function carregarDadosInicial() {
   fetchSheet().then(processarDados);
-}
-
-function recarregarDados() {
-  fetchSheet().then((csvText) => {
-    if (csvText !== ultimoCSV) {
-      processarDados(csvText);
-    }
-  });
 }
 
 function fetchSheet() {
@@ -37,7 +24,6 @@ function fetchSheet() {
 }
 
 function processarDados(csvText) {
-  ultimoCSV = csvText;
   rowsGlobal = parseCSV(csvText);
 
   const participanteAtual = document.getElementById("participante")?.value;
