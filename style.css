@@ -1,7 +1,7 @@
 ﻿:root {
-  --bg: #f5f5f5;
-  --card: #fff;
-  --bd: #e5e5e5;
+  --bg: #acc6ff;
+  --card: #d0ffc5;
+  --bd: #fefb98;
 }
 
 * {
@@ -19,7 +19,7 @@ body {
 .top {
   padding: 18px 20px;
   border-bottom: 1px solid var(--bd);
-  background: #fff;
+  background: var(--bd);
   text-align: center;
 }
 
@@ -37,12 +37,36 @@ body {
   overflow-wrap: anywhere;
 }
 
-.container {
+.content-shell {
+  max-width: 1600px;
+  margin: 0 auto;
   padding: 20px;
   display: grid;
+  grid-template-columns: minmax(0, 220px) minmax(0, 1100px) minmax(0, 220px);
   gap: 16px;
-  max-width: 1100px;
-  margin: 0 auto;
+  align-items: start;
+}
+
+.side-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.side-photo {
+  width: 100%;
+  display: block;
+  border: 1px solid var(--bd);
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.container {
+  padding: 0;
+  display: grid;
+  gap: 16px;
+  width: 100%;
+  margin: 0;
 }
 
 .card {
@@ -245,6 +269,18 @@ select {
 }
 
 /* Mobile */
+@media (max-width: 1320px) {
+  .content-shell {
+    max-width: 1100px;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 20px;
+  }
+
+  .side-column {
+    display: none;
+  }
+}
+
 @media (max-width: 768px) {
   .top h1 {
     font-size: 22px;
@@ -254,7 +290,7 @@ select {
     font-size: 13px;
   }
 
-  .container {
+  .content-shell {
     padding: 10px;
   }
 
