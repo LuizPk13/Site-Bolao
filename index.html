@@ -1,56 +1,79 @@
-﻿<!doctype html>
-<html lang="pt-br">
+﻿<!DOCTYPE html>
+<!-- Idioma da página: ajuda leitores de tela, SEO e o tradutor do navegador -->
+<html lang="pt-BR">
 
 <head>
+  <!-- Google Analytics (carregado de forma assíncrona para não travar a página) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-33JXYVQRXR"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
-
     gtag('config', 'G-33JXYVQRXR');
   </script>
 
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- UTF-8 garante que acentos (ç, ã, é) apareçam corretamente -->
+  <meta charset="UTF-8">
+  <!-- Faz o layout se ajustar à largura da tela (essencial no celular) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bolão da COJUR</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+
+  <!-- Preconnect abre a conexão com o Google Fonts antes, acelerando o carregamento da fonte -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./css/style.css">
 </head>
 
 <body>
   <header class="top">
-    <img class="header-bg" src="Imagens/Cabeçalho.png" alt="" aria-hidden="true" decoding="async" />
+    <!-- Imagem puramente decorativa: aria-hidden para leitores de tela ignorarem -->
+    <img class="header-bg" src="./img/wallpapers/cabeçalho.png" alt="cabeçalho" aria-hidden="true" decoding="async" />
     <h1>Bolão da Copa</h1>
     <p>Created by Luiz and designed by André e Matheus.</p>
   </header>
 
   <div class="content-shell">
+    <!-- ===== Coluna lateral esquerda: fotos dos participantes ===== -->
+    <!--
+      Atributos usados nas fotos:
+      - alt: descrição para leitores de tela (acessibilidade)
+      - loading="lazy": só baixa a imagem quando ela estiver perto de aparecer na tela
+      - decoding="async": decodifica a imagem sem travar o resto da página
+    -->
     <aside class="side-column side-column-left">
-      <img class="side-photo" src="Imagens/André.jpeg" alt="Foto do André" decoding="async" />
-      <img class="side-photo" src="Imagens/Cristiano.jpeg" alt="Foto do Cristiano" loading="lazy" decoding="async" />
-      <img class="side-photo" src="Imagens/Neide.jpeg" alt="Foto da Neide" loading="lazy" decoding="async" />
-      <img class="side-photo" src="Imagens/Generico-Maurcio.jpeg" alt="Foto do Generico-Maurcio" loading="lazy"
+      <img class="side-photo" src="./img/participantes/andre.jpeg" alt="Foto do André" loading="lazy"
         decoding="async" />
-      <img class="side-photo" src="Imagens/Matheus III.jpeg" alt="Foto do Matheus III" loading="lazy"
+      <img class="side-photo" src="./img/participantes/cristiano.jpeg" alt="Foto do Cristiano" loading="lazy"
         decoding="async" />
-      <img class="side-photo" src="Imagens/Evelyn.jpeg" alt="Foto da Evelyn" loading="lazy" decoding="async" />
-      <img class="side-photo" src="Imagens/Jaime.jpeg" alt="Foto de Jaime" loading="lazy" decoding="async" />
-      <img class="side-photo" src="Imagens/Samanta.jpeg" alt="Foto da Samanta" loading="lazy" decoding="async" />
-      <img class="side-photo" src="Imagens/pai_da_evelyn.jpeg" alt="Foto pai da Evelyn" loading="lazy" decoding="async" />
+      <img class="side-photo" src="./img/participantes/neide.jpeg" alt="Foto da Neide" loading="lazy"
+        decoding="async" />
+      <img class="side-photo" src="./img/participantes/generico_mauricio.jpeg" alt="Foto do Genérico-Maurício"
+        loading="lazy" decoding="async" />
+      <img class="side-photo" src="./img/participantes/matheus_iii.jpeg" alt="Foto do Matheus III" loading="lazy"
+        decoding="async" />
+      <img class="side-photo" src="./img/participantes/evelyn.jpeg" alt="Foto da Evelyn" loading="lazy"
+        decoding="async" />
+      <img class="side-photo" src="./img/participantes/jaime.jpeg" alt="Foto do Jaime" loading="lazy"
+        decoding="async" />
+      <img class="side-photo" src="./img/participantes/samanta.jpeg" alt="Foto da Samanta" loading="lazy"
+        decoding="async" />
+      <img class="side-photo" src="./img/participantes/pai_da_evelyn.jpeg" alt="Foto do pai da Evelyn" loading="lazy"
+        decoding="async" />
     </aside>
 
+    <!-- ===== Conteúdo principal ===== -->
     <main class="container">
+      <!-- Botões dos grupos: gerados pelo scripts.js dentro de #grupos -->
       <section class="card">
         <h2>Grupos</h2>
         <div id="grupos" class="grid"></div>
       </section>
 
+      <!-- Jogos do grupo selecionado: o JS troca o título e preenche #corpoGrupo -->
       <section class="card">
         <h2 id="tituloGrupo">Selecione um grupo</h2>
-
         <table class="table" id="tabelaGrupo">
           <thead>
             <tr>
@@ -65,14 +88,17 @@
         </table>
       </section>
 
+      <!-- Palpites: duas visões (por participante / por jogo), alternadas pelas abas -->
       <section class="card">
         <h2>Palpites</h2>
 
+        <!-- Abas: o JS alterna a classe "ativo" e mostra/esconde os painéis abaixo -->
         <div class="grid" style="margin-bottom: 15px;">
           <button id="tab-participante" class="pill ativo" aria-selected="true">Por Participante</button>
           <button id="tab-jogo" class="pill" aria-selected="false">Por Jogo</button>
         </div>
 
+        <!-- Painel 1: palpites de um participante, com filtro opcional por grupo -->
         <div id="painel-participante">
           <div class="row filtros">
             <label for="participante">Participante:</label>
@@ -84,6 +110,7 @@
             </select>
           </div>
 
+          <!-- Começa escondido; aparece depois que um participante é escolhido -->
           <div id="palpitesWrap" class="hidden">
             <h3 id="nomeSelecionado"></h3>
             <table class="table" id="palpites">
@@ -99,6 +126,7 @@
           </div>
         </div>
 
+        <!-- Painel 2: palpites de todos para um jogo (escolhe o grupo, depois o jogo) -->
         <div id="painel-jogo" class="hidden">
           <div class="row filtros">
             <label for="jogoGrupoFiltro">Grupo:</label>
@@ -112,6 +140,7 @@
             </select>
           </div>
 
+          <!-- Começa escondido; aparece depois que um jogo é escolhido -->
           <div id="porJogoWrap" class="hidden">
             <h3 id="tituloJogoSelecionado" style="text-align: center; padding-top: 15px;"></h3>
             <table class="table" id="tabelaPorJogo">
@@ -128,6 +157,7 @@
         </div>
       </section>
 
+      <!-- Ranking: linhas geradas pelo JS, ordenadas por pontos -->
       <section class="card">
         <h2>Top participantes</h2>
         <table class="table" id="ranking">
@@ -142,41 +172,49 @@
         </table>
       </section>
 
+      <!-- Regras fixas no HTML; se mudarem, atualizar também o cálculo no scripts.js -->
       <section class="card">
-        <h2>Regras de Pontuação.</h2>
+        <h2>Regras de Pontuação</h2>
         <ul>
           <li><strong>Placar correto</strong>: 10 pts</li>
-          <li>
-            <strong>Vencedor e o nº de gols de algum time</strong>: 7 pts
-          </li>
-          <li>
-            <strong>Vencedor ou empate com placar errado</strong>: 5 pts
-          </li>
+          <li><strong>Vencedor e o nº de gols de algum time</strong>: 7 pts</li>
+          <li><strong>Vencedor ou empate com placar errado</strong>: 5 pts</li>
           <li><strong>Apenas o gol de alguma das partes</strong>: 2 pts</li>
           <li><strong>Placar errado</strong>: 0 pts</li>
         </ul>
       </section>
 
+      <!-- Prêmio: imagem puramente decorativa -->
       <section class="card">
         <h2>Prêmio a receber R$ 1.000,00</h2>
-        <img class="taca_bolao" src="Imagens/taca_bolao.png" alt="Foto da Taça" loanding="lazy" decoding="async">
+        <img class="taca_bolao" src="./img/wallpapers/taca_bolao.png" alt="Taça do bolão" loading="lazy"
+          decoding="async">
       </section>
     </main>
 
-    <aside class="side-column side-column-left">
-      <img class="side-photo" src="Imagens/Luiz.jpeg" alt="Foto do Luiz" loading="lazy" decoding="async" />
-      <img class="side-photo" src="Imagens/Dama.jpeg" alt="Foto de Dama" loading="lazy" decoding="async" />
-      <img class="side-photo" src="Imagens/Ramon.jpeg" alt="Ramon" loading="lazy" decoding="async" />
-      <img class="side-photo" src="Imagens/Fabiola.jpeg" alt="Foto da Fabiola" loading="lazy" decoding="async" />
-      <img class="side-photo" src="Imagens/Vanessa.jpeg" alt="Foto da Vanessa" loading="lazy" decoding="async" />
-      <img class="side-photo" src="Imagens/Dr.Felipe.jpeg" alt="Foto do Dr.Felipe" loading="lazy" decoding="async" />
-      <img class="side-photo" src="Imagens/MatheusG.jpeg" alt="Foto do MetheusG" loading="lazy" decoding="async" />
-      <img class="side-photo" src="Imagens/Dr.Rhenan.jpeg" alt="Foto do Dr.Rhenan" loading="lazy" decoding="async" />
-      <img class="side-photo" src="Imagens/Kaylane.jpeg" alt="Foto da Kaylane" loading="lazy" decoding="async" />
+    <!-- ===== Coluna lateral direita: fotos dos participantes (mesmos atributos da esquerda) ===== -->
+    <aside class="side-column side-column-right">
+      <img class="side-photo" src="./img/participantes/luiz.jpeg" alt="Foto do Luiz" loading="lazy" decoding="async" />
+      <img class="side-photo" src="./img/participantes/dama.jpeg" alt="Foto da Dama" loading="lazy" decoding="async" />
+      <img class="side-photo" src="./img/participantes/ramon.jpeg" alt="Foto do Ramon" loading="lazy"
+        decoding="async" />
+      <img class="side-photo" src="./img/participantes/fabiola.jpeg" alt="Foto da Fabíola" loading="lazy"
+        decoding="async" />
+      <img class="side-photo" src="./img/participantes/vanessa.jpeg" alt="Foto da Vanessa" loading="lazy"
+        decoding="async" />
+      <img class="side-photo" src="./img/participantes/dr.felipe.jpeg" alt="Foto do Dr. Felipe" loading="lazy"
+        decoding="async" />
+      <img class="side-photo" src="./img/participantes/matheus_g.jpeg" alt="Foto do Matheus G" loading="lazy"
+        decoding="async" />
+      <img class="side-photo" src="./img/participantes/dr.rhenan.jpeg" alt="Foto do Dr. Rhenan" loading="lazy"
+        decoding="async" />
+      <img class="side-photo" src="./img/participantes/kaylane.jpeg" alt="Foto da Kaylane" loading="lazy"
+        decoding="async" />
     </aside>
   </div>
 
-  <script src="scripts.js"></script>
+  <!-- Script no fim do body: o HTML já existe quando o JS roda e procura os elementos -->
+  <script src="./js/scripts.js"></script>
 </body>
 
 </html>
